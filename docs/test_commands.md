@@ -13,6 +13,16 @@ After setting up your `.env` file with the Discord token, channel ID, and Raider
 - `!test` - Test bot functionality
 - `!help` - Shows all available commands
 
+## Blue Tracker and News Commands (Enhanced with Banner Images)
+- `!bluetrack` - Check for new Blizzard blue posts (with thematic banner images based on content)
+- `!bluetrack latest` - Get latest blue posts regardless of cache
+- `!bluetrack test` - Test the blue tracker functionality
+- `!news` - Check for new Wowhead news articles (with banner images when available)
+- `!news latest` - Get latest news articles regardless of cache
+- `!news reset` - Get articles relevant to weekly reset activities
+
+**Note**: Blue posts now automatically include thematic WoW images based on content keywords (e.g., Mythic+ images for dungeon content, expansion images for major announcements, conference images for GamesCom/BlizzCon panels, etc.). News articles include actual banner images when available from Wowhead, or thematic images as fallback.
+
 ## Scheduled Posts
 The bot will automatically post:
 - **Monday at 1:00 PM CDT (18:00 UTC)**: Reset warning message
@@ -23,7 +33,7 @@ The bot will automatically post:
    ```
    DISCORD_TOKEN=your_bot_token_here
    TARGET_CHANNEL_ID=your_channel_id_here
-   RAIDER_IO_API_KEY=RIOTakCiu3LyJv7NJP7Fout4E
+   RAIDER_IO_API_KEY=your_raider_io_key
    ```
 
 2. Make sure your bot has permissions to:

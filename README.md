@@ -8,6 +8,7 @@ A Discord bot for World of Warcraft players that provides weekly checklists and 
 - **Scheduled Posts**: Automatic Monday warnings and Tuesday checklists
 - **Blue Post Integration**: Automatically includes relevant Blizzard updates in weekly reminders
 - **Wowhead News Integration**: Monitors for reset-relevant articles and news updates
+- **Enhanced Visual Experience**: Banner images and thematic visuals for posts and articles
 - **Mythic+ Integration**: Shows current week's affixes and season cutoffs
 - **Blue Tracker Monitoring**: Monitors Wowhead Blue Tracker for new Blizzard posts
 - **News Monitoring**: Automatically tracks Wowhead news for relevant WoW articles
@@ -126,6 +127,31 @@ The bot automatically monitors the Wowhead Blue Tracker for official Blizzard po
 - Never miss important hotfixes or tuning changes
 - Get advance notice of upcoming content or maintenance
 - See everything in one place alongside your weekly checklist
+
+## Enhanced Visual Experience
+
+The bot now includes rich visual elements to make posts more engaging and informative:
+
+### Banner Images
+- **Blue Posts**: Display banner images from the original posts when available
+- **News Articles**: Show featured images from Wowhead articles
+- **Automatic Fallbacks**: When original images aren't available, thematic WoW images are used based on content
+
+### Thematic Image Selection
+When posts or articles don't have specific images, the bot automatically selects appropriate WoW-themed images based on content:
+
+- **Mythic+ content**: Dungeon achievement images
+- **Raid content**: Raid boss and encounter images  
+- **PvP content**: Arena and battleground achievement images
+- **Class updates**: Character and specialization images
+- **Maintenance/Hotfixes**: Technical and engineering themed images
+- **Seasonal content**: Event and celebration images
+- **General updates**: WoW logo and general achievement images
+
+### Visual Consistency
+- All embeds maintain consistent branding with appropriate thumbnails
+- Color coding helps distinguish between different types of content
+- Clean layout ensures information remains readable while being visually appealing
 
 ## Wowhead News Integration
 

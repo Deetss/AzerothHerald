@@ -17,7 +17,7 @@ class HelpCommand(commands.Cog):
             # Show general help
             embed = discord.Embed(
                 title="🛡️ Azeroth Herald - Command Guide",
-                description="Your companion for World of Warcraft weekly tasks!",
+                description="Your companion for World of Warcraft weekly tasks with enhanced visual experience!",
                 color=discord.Color.gold()
             )
             
@@ -31,8 +31,8 @@ class HelpCommand(commands.Cog):
                     "`!time` - Show current time and schedule info\n"
                     "`!affixes` - Show current Mythic+ affixes\n"
                     "`!cutoffs` - Show M+ season rating cutoffs\n"
-                    "`!bluetrack` - Check for new Blizzard posts\n"
-                    "`!news` - Check for new Wowhead articles\n"
+                    "`!bluetrack` - Check for new Blizzard posts **(with banner images)**\n"
+                    "`!news` - Check for new Wowhead articles **(with banner images)**\n"
                     "`!newssummary` - Get categorized news summary\n"
                     "`!test` - Test bot functionality"
                 ),
@@ -52,11 +52,15 @@ class HelpCommand(commands.Cog):
             
             embed.add_field(
                 name="ℹ️ More Info",
-                value="Use `!help <command>` for detailed information about a specific command.",
+                value=(
+                    "Use `!help <command>` for detailed information about a specific command.\n\n"
+                    "**✨ New Feature**: Blue posts and news articles now include banner images "
+                    "and thematic WoW visuals for a more engaging experience!"
+                ),
                 inline=False
             )
             
-            embed.set_footer(text="For Azeroth! | Made with ❤️ for the WoW community")
+            embed.set_footer(text="For Azeroth! | Enhanced with banner images | Made with ❤️ for the WoW community")
             
         else:
             # Show help for specific command

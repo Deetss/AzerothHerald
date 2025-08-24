@@ -53,83 +53,168 @@ class WowheadNewsScraper:
         articles = []
         
         try:
-            # Create some sample articles for now based on common WoW topics
-            # This is a simplified approach since the dynamic content is complex to parse
-            current_time = datetime.now(timezone.utc).isoformat()
+            # Look for actual news articles in the HTML structure
+            news_cards = soup.find_all('a', class_='news-card-simple-thumbnail')
             
-            sample_articles = [
-                {
-                    'title': 'Weekly Mythic+ Affixes - Current Rotation Analysis',
-                    'url': 'https://www.wowhead.com/guides/mythic-plus-dungeons',
-                    'author': 'Wowhead Staff',
-                    'time_posted': 'Recently',
-                    'article_id': 'mythic_plus_guide',
-                    'scraped_at': current_time,
-                    'content_preview': 'Analysis of current Mythic+ affixes and optimal strategies for this week\'s rotation.'
-                },
-                {
-                    'title': 'Great Vault Rewards Guide - Maximize Your Weekly Loot',
-                    'url': 'https://www.wowhead.com/guides/great-vault-weekly-chest-the-war-within',
-                    'author': 'Wowhead Staff',
-                    'time_posted': 'Recently',
-                    'article_id': 'great_vault_guide',
-                    'scraped_at': current_time,
-                    'content_preview': 'Complete guide to maximizing your Great Vault rewards through Mythic+, raids, and PvP activities.'
-                },
-                {
-                    'title': 'The War Within Season 2 - What to Expect',
-                    'url': 'https://www.wowhead.com/guides/the-war-within-season-2',
-                    'author': 'Wowhead Staff',
-                    'time_posted': 'Recently',
-                    'article_id': 'season_2_guide',
-                    'scraped_at': current_time,
-                    'content_preview': 'Preview of upcoming changes and content in The War Within Season 2.'
-                }
-            ]
-            
-            # Filter for relevant articles
-            for article_data in sample_articles:
-                if self.is_relevant_article(article_data):
-                    articles.append(article_data)
-            
-            # Try to get real articles from page text if possible
-            try:
-                page_text = soup.get_text()
+            if news_cards:
+                current_time = datetime.now(timezone.utc).isoformat()
                 
-                # Look for WoW-related headlines in the page
-                wow_terms = ['mythic', 'raid', 'season', 'patch', 'hotfix', 'class', 'spec', 'pvp', 'dungeon']
-                lines = page_text.split('\n')
-                
-                for line in lines:
-                    line = line.strip()
-                    if (len(line) > 20 and len(line) < 100 and 
-                        any(term in line.lower() for term in wow_terms) and
-                        not any(exclude in line.lower() for exclude in ['menu', 'navigation', 'footer', 'header'])):
+                for card in news_cards[:10]:  # Limit to 10 articles
+                    try:
+                        # Extract the article URL from the href attribute
+                        article_url = card.get('href', '')
+                        if article_url and article_url.startswith('/'):
+                            article_url = f"https://www.wowhead.com{article_url}"
                         
-                        # This looks like it could be an article title
-                        article_data = {
-                            'title': line,
-                            'url': 'https://www.wowhead.com/news',
-                            'author': 'Wowhead Staff',
-                            'time_posted': 'Recently',
-                            'article_id': f"parsed_{hash(line) % 1000000}",
-                            'scraped_at': current_time,
-                            'content_preview': 'Article found from Wowhead news page.'
-                        }
+                        # Extract the banner image from the img tag inside the card
+                        img_tag = card.find('img')
+                        image_url = None
+                        title = "Unknown Title"
                         
-                        if self.is_relevant_article(article_data) and len(articles) < 10:
-                            # Avoid duplicates
-                            if not any(a['title'] == article_data['title'] for a in articles):
+                        if img_tag:
+                            image_url = img_tag.get('src', '')
+                            title = img_tag.get('alt', 'Unknown Title')
+                            
+                            # Normalize image URL if needed
+                            if image_url:
+                                if image_url.startswith('//'):
+                                    image_url = f"https:{image_url}"
+                                elif image_url.startswith('/'):
+                                    image_url = f"https://www.wowhead.com{image_url}"
+                        
+                        # Try to find additional article information from surrounding elements
+                        article_info = self._extract_article_metadata(card, soup)
+                        
+                        # Create article data
+                        if title and len(title) > 5:
+                            article_data = {
+                                'title': title,
+                                'url': article_url,
+                                'author': article_info.get('author', 'Wowhead Staff'),
+                                'time_posted': article_info.get('time_posted', 'Recently'),
+                                'article_id': self._extract_article_id(article_url),
+                                'scraped_at': current_time,
+                                'content_preview': article_info.get('preview', f'News article: {title[:100]}...'),
+                                'image_url': image_url
+                            }
+                            
+                            if self.is_relevant_article(article_data):
                                 articles.append(article_data)
                                 
-            except Exception as e:
-                print(f"Error parsing real articles: {e}")
+                    except Exception as e:
+                        print(f"Error parsing news card: {e}")
+                        continue
+            
+            # If we didn't find real articles, fall back to sample articles
+            if not articles:
+                current_time = datetime.now(timezone.utc).isoformat()
                 
+                sample_articles = [
+                    {
+                        'title': 'Weekly Mythic+ Affixes - Current Rotation Analysis',
+                        'url': 'https://www.wowhead.com/guides/mythic-plus-dungeons',
+                        'author': 'Wowhead Staff',
+                        'time_posted': 'Recently',
+                        'article_id': 'mythic_plus_guide',
+                        'scraped_at': current_time,
+                        'content_preview': 'Analysis of current Mythic+ affixes and optimal strategies for this week\'s rotation.',
+                        'image_url': 'https://wow.zamimg.com/images/wow/icons/large/achievement_dungeon_thearcway_mythic.jpg'
+                    },
+                    {
+                        'title': 'Great Vault Rewards Guide - Maximize Your Weekly Loot',
+                        'url': 'https://www.wowhead.com/guides/great-vault-weekly-chest-the-war-within',
+                        'author': 'Wowhead Staff',
+                        'time_posted': 'Recently',
+                        'article_id': 'great_vault_guide',
+                        'scraped_at': current_time,
+                        'content_preview': 'Complete guide to maximizing your Great Vault rewards through Mythic+, raids, and PvP activities.',
+                        'image_url': 'https://wow.zamimg.com/images/wow/icons/large/inv_chest_cloth_raid_brf_mythic.jpg'
+                    },
+                    {
+                        'title': 'The War Within Season 2 - What to Expect',
+                        'url': 'https://www.wowhead.com/guides/the-war-within-season-2',
+                        'author': 'Wowhead Staff',
+                        'time_posted': 'Recently',
+                        'article_id': 'season_2_guide',
+                        'scraped_at': current_time,
+                        'content_preview': 'Preview of upcoming changes and content in The War Within Season 2.',
+                        'image_url': 'https://wow.zamimg.com/images/wow/icons/large/achievement_raid_dragonsoulraid_madness5.jpg'
+                    }
+                ]
+                
+                # Filter for relevant articles
+                for article_data in sample_articles:
+                    if self.is_relevant_article(article_data):
+                        articles.append(article_data)
+                        
         except Exception as e:
             print(f"Error parsing articles: {e}")
             
         return articles[:5]  # Limit to 5 articles
     
+    def _extract_article_metadata(self, card_element, soup: BeautifulSoup) -> Dict:
+        """Extract additional metadata for an article from surrounding HTML elements."""
+        metadata = {
+            'author': 'Wowhead Staff',
+            'time_posted': 'Recently',
+            'preview': ''
+        }
+        
+        try:
+            # Look for article metadata in parent containers or nearby elements
+            parent = card_element.parent
+            
+            # Try to find the article container that might have more info
+            for _ in range(3):  # Check up to 3 levels up
+                if parent:
+                    # Look for author information
+                    author_elements = parent.find_all(attrs={'class': re.compile(r'author|byline|writer', re.I)})
+                    for elem in author_elements:
+                        author_text = elem.get_text().strip()
+                        if author_text and len(author_text) < 50:
+                            # Clean up author text
+                            author_text = re.sub(r'^(by\s+|written\s+by\s+)', '', author_text, flags=re.I)
+                            if author_text and author_text != 'Wowhead Staff':
+                                metadata['author'] = author_text
+                                break
+                    
+                    # Look for time/date information
+                    time_elements = parent.find_all(attrs={'class': re.compile(r'time|date|posted|published', re.I)})
+                    for elem in time_elements:
+                        time_text = elem.get_text().strip()
+                        if time_text and len(time_text) < 100:
+                            metadata['time_posted'] = time_text
+                            break
+                    
+                    # Look for article preview/summary text
+                    preview_elements = parent.find_all(attrs={'class': re.compile(r'summary|preview|excerpt|description', re.I)})
+                    for elem in preview_elements:
+                        preview_text = elem.get_text().strip()
+                        if preview_text and len(preview_text) > 20:
+                            metadata['preview'] = preview_text[:200] + "..." if len(preview_text) > 200 else preview_text
+                            break
+                    
+                    parent = parent.parent
+                else:
+                    break
+            
+            # If no preview found, try to create one from the title
+            if not metadata['preview']:
+                href = card_element.get('href', '')
+                if href:
+                    # Extract a basic description from the URL path
+                    path_parts = href.split('/')
+                    if len(path_parts) > 2:
+                        # Convert URL slug to readable text
+                        slug = path_parts[-1].split('-')[:-1]  # Remove ID at end
+                        readable_title = ' '.join(slug).replace('-', ' ').title()
+                        metadata['preview'] = f"Read about {readable_title} and its impact on World of Warcraft."
+                        
+        except Exception as e:
+            print(f"Error extracting article metadata: {e}")
+        
+        return metadata
+
     def _extract_time_info(self, link_element) -> str:
         """Extract time information from near the link element."""
         try:
@@ -182,6 +267,104 @@ class WowheadNewsScraper:
             return url.split('/')[-1]
         except Exception:
             return url
+
+    def _extract_image_from_html(self, soup: BeautifulSoup, article_link) -> Optional[str]:
+        """Extract the main image/banner from an article's HTML context."""
+        try:
+            # First, look for Wowhead-specific news card structure
+            if article_link:
+                # Check if this is already a news-card-simple-thumbnail
+                if 'news-card-simple-thumbnail' in str(article_link.get('class', [])):
+                    img_tag = article_link.find('img')
+                    if img_tag:
+                        src = img_tag.get('src')
+                        if src and self._is_valid_article_image(src):
+                            return self._normalize_image_url(src)
+                
+                # Look for nearby news cards or image containers
+                parent = article_link.parent
+                for _ in range(3):  # Check up to 3 levels up
+                    if parent:
+                        # Look for news card thumbnails
+                        news_cards = parent.find_all('a', class_='news-card-simple-thumbnail')
+                        for card in news_cards:
+                            img = card.find('img')
+                            if img:
+                                src = img.get('src')
+                                if src and self._is_valid_article_image(src):
+                                    return self._normalize_image_url(src)
+                        
+                        # Look for regular img tags
+                        imgs = parent.find_all('img')
+                        for img in imgs:
+                            src = img.get('src') or img.get('data-src')
+                            if src and self._is_valid_article_image(src):
+                                return self._normalize_image_url(src)
+                        
+                        parent = parent.parent
+                    else:
+                        break
+                
+                # Look for background images in style attributes
+                if article_link.parent:
+                    elements_with_style = article_link.parent.find_all(attrs={'style': True})
+                    for element in elements_with_style:
+                        style = element.get('style', '')
+                        if 'background-image' in style:
+                            # Extract URL from background-image: url(...)
+                            match = re.search(r'background-image\s*:\s*url\(["\']?([^"\'()]+)["\']?\)', style)
+                            if match:
+                                url = match.group(1)
+                                if self._is_valid_article_image(url):
+                                    return self._normalize_image_url(url)
+            
+            return None
+        except Exception as e:
+            print(f"Error extracting image from HTML: {e}")
+            return None
+
+    def _is_valid_article_image(self, src: str) -> bool:
+        """Check if an image src is likely to be a valid article banner."""
+        if not src or len(src) < 10:
+            return False
+        
+        src_lower = src.lower()
+        
+        # Specifically accept Wowhead upload paths which follow the pattern you showed
+        if 'wow.zamimg.com/uploads/blog/images' in src_lower:
+            return True
+        
+        # Skip obviously non-article images
+        skip_patterns = [
+            'tiny', 'small', 'thumb_', '_thumb', 'favicon',
+            'icon-', '-icon', 'logo', 'avatar', 'button', 'nav', 'menu', 
+            'social', 'ad', 'banner-ad', 'sponsor', 'promo'
+        ]
+        
+        if any(pattern in src_lower for pattern in skip_patterns):
+            return False
+        
+        # Look for typical article image patterns
+        good_patterns = [
+            'news', 'article', 'post', 'content', 'hero', 'banner',
+            'feature', 'preview', 'header', 'main', 'uploads'
+        ]
+        
+        # Accept images from trusted domains with good patterns
+        trusted_domains = ['wowhead.com', 'wow.zamimg.com', 'blz-contentstack.com']
+        
+        return (any(pattern in src_lower for pattern in good_patterns) or
+                any(domain in src_lower for domain in trusted_domains))
+        
+    def _normalize_image_url(self, url: str) -> str:
+        """Normalize an image URL to be absolute and properly formatted."""
+        if url.startswith('//'):
+            return f"https:{url}"
+        elif url.startswith('/'):
+            return f"https://www.wowhead.com{url}"
+        elif not url.startswith('http'):
+            return f"https://www.wowhead.com/{url}"
+        return url
     
     def _deduplicate_articles(self, articles: List[Dict]) -> List[Dict]:
         """Remove duplicate articles based on title similarity and URL."""

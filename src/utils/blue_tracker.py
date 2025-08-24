@@ -87,6 +87,93 @@ class BlueTrackerScraper:
         except Exception as e:
             print(f"Error parsing posts: {e}")
             
+        # If JSON extraction failed or returned nothing, try DOM-based scraping as a fallback
+        if not posts and soup:
+            try:
+                anchors = soup.find_all('a', href=True)
+                seen = set()
+                for a in anchors:
+                    href = a['href']
+                    # Focus on links that likely point to blue tracker posts or Wowhead news
+                    if 'blue-tracker' not in href and '/news/' not in href and 'blue-tracker/topic' not in href:
+                        continue
+
+                    title = a.get_text(strip=True)
+                    if not title or len(title) < 3:
+                        # try title attribute
+                        title = a.get('title', '').strip()
+                        if not title or len(title) < 3:
+                            continue
+
+                    # Try to find a snippet or body nearby
+                    parent = a.find_parent()
+                    snippet = ''
+                    if parent:
+                        p = parent.find('p')
+                        if p:
+                            snippet = p.get_text(strip=True)
+
+                    # Try to find time/author
+                    time_posted = ''
+                    author = ''
+                    if parent:
+                        time_el = parent.find('time') or parent.find(class_=lambda c: c and 'time' in c)
+                        if time_el:
+                            time_posted = time_el.get('datetime') if time_el.has_attr('datetime') else time_el.get_text(strip=True)
+                        author_el = parent.find(class_=lambda c: c and 'author' in c)
+                        if author_el:
+                            author = author_el.get_text(strip=True)
+
+                    # Find an image in the parent or nearby elements
+                    image_url = None
+                    if parent:
+                        img_tag = parent.find('img')
+                        if img_tag and img_tag.get('src'):
+                            candidate = img_tag.get('src')
+                            candidate = self._normalize_image_url(candidate)
+                            if self._is_valid_post_image(candidate):
+                                image_url = candidate
+
+                    if not image_url:
+                        prev_img = a.find_previous('img')
+                        next_img = a.find_next('img')
+                        for img_tag in (prev_img, next_img):
+                            if img_tag and img_tag.get('src'):
+                                candidate = self._normalize_image_url(img_tag.get('src'))
+                                if self._is_valid_post_image(candidate):
+                                    image_url = candidate
+                                    break
+
+                    # Normalize href to absolute URL
+                    if href.startswith('/'):
+                        post_url = f"https://www.wowhead.com{href}"
+                    elif href.startswith('http'):
+                        post_url = href
+                    else:
+                        post_url = urllib.parse.urljoin(self.url, href)
+
+                    post = {
+                        'title': title,
+                        'author': author or 'Unknown',
+                        'time_posted': time_posted or '',
+                        'url': post_url,
+                        'content_preview': snippet,
+                        'scraped_at': datetime.now(timezone.utc).isoformat(),
+                        'post_id': '',
+                        'region': '',
+                        'image_url': image_url
+                    }
+
+                    if self.is_relevant_post(post):
+                        key = f"{post_url}|{title}"
+                        if key not in seen:
+                            posts.append(post)
+                            seen.add(key)
+                    if len(posts) >= 10:
+                        break
+            except Exception as e:
+                print(f"Error in DOM fallback scraping: {e}")
+
         return posts
     
     def extract_post_from_json(self, entry: Dict) -> Optional[Dict]:
@@ -98,6 +185,33 @@ class BlueTrackerScraper:
             post_id = entry.get('id', '')
             body = entry.get('body', '')
             region = entry.get('region', '').lower()
+            
+            # Extract image/banner URL if available
+            image_url = None
+            # Check for various image fields in the JSON entry
+            if 'image' in entry and entry['image']:
+                image_url = entry['image']
+            elif 'banner' in entry and entry['banner']:
+                image_url = entry['banner']
+            elif 'thumbnail' in entry and entry['thumbnail']:
+                image_url = entry['thumbnail']
+            elif 'img' in entry and entry['img']:
+                image_url = entry['img']
+            
+            # If image_url is relative, make it absolute
+            if image_url:
+                if image_url.startswith('/'):
+                    image_url = f"https://www.wowhead.com{image_url}"
+                elif image_url.startswith('//'):
+                    image_url = f"https:{image_url}"
+            
+            # Try to extract image from body content if no direct image found
+            if not image_url and body:
+                image_url = self._extract_image_from_content(body)
+            
+            # For news articles, try to fetch the banner image from the actual news page
+            if not image_url and entry.get('news') and entry.get('url'):
+                image_url = self._fetch_news_banner_image(entry['url'])
             
             # Filter by region if specified
             if self.region_filter and region and region != self.region_filter:
@@ -164,13 +278,132 @@ class BlueTrackerScraper:
                     'content_preview': body[:200] + "..." if len(body) > 200 else body,
                     'scraped_at': datetime.now(timezone.utc).isoformat(),
                     'post_id': str(post_id),
-                    'region': region
+                    'region': region,
+                    'image_url': image_url  # Add image URL to the returned data
                 }
                 
         except Exception as e:
             print(f"Error extracting post from JSON: {e}")
             
         return None
+
+    def _extract_image_from_content(self, content: str) -> Optional[str]:
+        """Extract image URLs from post content (HTML or text)."""
+        try:
+            import re
+            
+            # Look for img tags in HTML content
+            img_pattern = r'<img[^>]+src=["\']([^"\']+)["\'][^>]*>'
+            img_matches = re.findall(img_pattern, content, re.IGNORECASE)
+            
+            for img_src in img_matches:
+                if self._is_valid_post_image(img_src):
+                    return self._normalize_image_url(img_src)
+            
+            # Look for direct image URLs in text
+            url_pattern = r'https?://[^\s<>"]+\.(?:jpg|jpeg|png|gif|webp)(?:\?[^\s<>"]*)?'
+            url_matches = re.findall(url_pattern, content, re.IGNORECASE)
+            
+            for img_url in url_matches:
+                if self._is_valid_post_image(img_url):
+                    return img_url
+            
+            return None
+        except Exception as e:
+            print(f"Error extracting image from content: {e}")
+            return None
+
+    def _is_valid_post_image(self, src: str) -> bool:
+        """Check if an image src is likely to be a valid post image."""
+        if not src or len(src) < 10:
+            return False
+        
+        # Skip obviously non-post images
+        skip_patterns = [
+            'avatar', 'icon-small', 'emoji', 'smiley', 'button',
+            'nav', 'menu', 'logo-small', 'signature',
+            'share-icon', 'facebook', 'twitter', 'social',
+            'logo.png', 'favicon', 'generic', 'placeholder'
+        ]
+        
+        src_lower = src.lower()
+        if any(pattern in src_lower for pattern in skip_patterns):
+            return False
+        
+        # Accept images from trusted domains or with good patterns
+        trusted_domains = ['blizzard.com', 'battle.net', 'wowhead.com', 'wow.zamimg.com']
+        good_patterns = ['screenshot', 'image', 'content', 'post', 'news', 'announcement', 'banner', 'header']
+        
+        return (any(domain in src_lower for domain in trusted_domains) and
+                any(pattern in src_lower for pattern in good_patterns) and
+                # Accept if it's a reasonable sized image URL
+                len(src) > 30)
+
+    def _normalize_image_url(self, url: str) -> str:
+        """Normalize an image URL to be absolute and properly formatted."""
+        if url.startswith('//'):
+            return f"https:{url}"
+        elif url.startswith('/'):
+            return f"https://www.wowhead.com{url}"
+        elif not url.startswith('http'):
+            return f"https://www.wowhead.com/{url}"
+        return url
+    
+    def _fetch_news_banner_image(self, news_url: str) -> Optional[str]:
+        """Fetch the banner image from a Wowhead news article page."""
+        try:
+            import requests
+            
+            # Convert relative URL to absolute
+            if news_url.startswith('/'):
+                full_url = f"https://www.wowhead.com{news_url}"
+            else:
+                full_url = news_url
+            
+            # Fetch the news page
+            response = requests.get(full_url, headers=self.headers, timeout=10)
+            response.raise_for_status()
+            
+            # Parse the page
+            news_soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Look for common news banner patterns
+            banner_selectors = [
+                'img.news-banner',
+                'img.article-banner', 
+                '.news-header img',
+                '.article-header img',
+                'meta[property="og:image"]',
+                'meta[name="twitter:image"]'
+            ]
+            
+            for selector in banner_selectors:
+                if selector.startswith('meta'):
+                    meta_tag = news_soup.find('meta', attrs={'property' if 'property' in selector else 'name': selector.split('"')[1]})
+                    if meta_tag and meta_tag.get('content'):
+                        image_url = meta_tag['content']
+                        if self._is_valid_post_image(image_url):
+                            return self._normalize_image_url(image_url)
+                else:
+                    img_tag = news_soup.select_one(selector)
+                    if img_tag and img_tag.get('src'):
+                        image_url = img_tag['src']
+                        if self._is_valid_post_image(image_url):
+                            return self._normalize_image_url(image_url)
+            
+            # Fallback: look for any large image in the content area
+            content_area = news_soup.find('div', class_=['news-content', 'article-content', 'content'])
+            if content_area:
+                images = content_area.find_all('img')
+                for img in images:
+                    if img.get('src') and self._is_valid_post_image(img['src']):
+                        return self._normalize_image_url(img['src'])
+            
+            return None
+            
+        except Exception as e:
+            print(f"Error fetching news banner image from {news_url}: {e}")
+            return None
     
     def is_relevant_post(self, post_data: Dict) -> bool:
         """Determine if a post is relevant for notifications."""
@@ -294,7 +527,12 @@ class BlueTrackerScraper:
         }
         
         if url:
-            embed_data['url'] = url
+                embed_data['url'] = url
+
+        # Add image if available
+        image_url = post.get('image_url')
+        if image_url:
+                embed_data['image'] = {'url': image_url}
             
         return embed_data
     

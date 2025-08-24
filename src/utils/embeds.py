@@ -165,6 +165,103 @@ def _add_blue_post_fields_to_embed(embed: discord.Embed, blue_post_summary: Dict
                 )
 
 
+def _get_thematic_image_for_post(post_data: Dict) -> Optional[str]:
+    """Get a thematic WoW image based on post content when no image is provided."""
+    if not post_data:
+        return None
+    
+    title = post_data.get('title', '').lower()
+    content = post_data.get('content_preview', '').lower()
+    combined_text = f"{title} {content}"
+    
+    # Map keywords to appropriate WoW images
+    image_mappings = {
+        # Most specific matches first
+        
+        # Expansion specific (very specific keywords)
+        ('midnight', 'worldsoul', 'war within', 'dragonflight'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_raid_dragonsoulraid_madness5.jpg',
+        
+        # Conferences and announcements (specific events)
+        ('gamescom', 'blizzcon', 'panel vod', 'systems download'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_guildperk_workingovertime.jpg',
+        
+        # Mythic+ related
+        ('mythic+', 'mythic plus', 'm+', 'keystone', 'affix'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_dungeon_thearcway_mythic.jpg',
+        
+        # Raid related
+        ('raid', 'boss', 'encounter', 'tier'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_raid_dragonsoulraid_madness10.jpg',
+        
+        # PvP related
+        ('pvp', 'arena', 'battleground', 'honor', 'conquest'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_pvp_a_14.jpg',
+        
+        # Class/Balance related (more specific terms)
+        ('class changes', 'spec changes', 'talent', 'class tuning', 'spec tuning', 'balance changes', 'nerf', 'buff'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_character_human_male.jpg',
+        
+        # Technical/Maintenance
+        ('hotfix', 'maintenance', 'server', 'downtime', 'restart'): 'https://wow.zamimg.com/images/wow/icons/large/inv_gizmo_02.jpg',
+        
+        # Seasonal/Events
+        ('season', 'event', 'holiday', 'celebration'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_boss_murmur.jpg',
+        
+        # General updates (broad terms - last)
+        ('patch', 'update', 'new', 'feature', 'expansion', 'announcement', 'preview'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_general_stayclassy.jpg'
+    }
+    
+    # Find the first matching category
+    for keywords, image_url in image_mappings.items():
+        if any(keyword in combined_text for keyword in keywords):
+            return image_url
+    
+    # Default fallback for official Blizzard posts
+    return 'https://wow.zamimg.com/images/wow/icons/large/achievement_general_stayclassy.jpg'
+
+
+def _get_thematic_image_for_article(article_data: Dict) -> Optional[str]:
+    """Get a thematic WoW image based on article content when no image is provided."""
+    if not article_data:
+        return None
+    
+    title = article_data.get('title', '').lower()
+    content = article_data.get('content_preview', '').lower()
+    combined_text = f"{title} {content}"
+    
+    # Map keywords to appropriate WoW images (similar to posts but with some article-specific ones)
+    image_mappings = {
+        # Mythic+ and Dungeons
+        ('mythic', 'dungeon', 'm+', 'keystone', 'affix'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_dungeon_thearcway_mythic.jpg',
+        
+        # Raid and PvE content
+        ('raid', 'boss', 'encounter', 'tier', 'heroic', 'normal'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_raid_dragonsoulraid_madness10.jpg',
+        
+        # Great Vault and Weekly rewards
+        ('vault', 'weekly', 'reward', 'loot', 'chest'): 'https://wow.zamimg.com/images/wow/icons/large/inv_chest_cloth_raid_brf_mythic.jpg',
+        
+        # PvP content
+        ('pvp', 'arena', 'battleground', 'honor', 'conquest', 'rated'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_pvp_a_14.jpg',
+        
+        # Class guides and builds
+        ('class', 'spec', 'build', 'rotation', 'talent', 'guide'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_character_human_male.jpg',
+        
+        # Professions
+        ('profession', 'crafting', 'gathering', 'recipe', 'knowledge'): 'https://wow.zamimg.com/images/wow/icons/large/trade_engineering.jpg',
+        
+        # Events and Seasonal content
+        ('event', 'holiday', 'celebration', 'seasonal', 'anniversary'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_boss_murmur.jpg',
+        
+        # Expansion and Season content
+        ('season', 'expansion', 'patch', 'content', 'new'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_raid_dragonsoulraid_madness5.jpg',
+        
+        # News and General updates
+        ('news', 'update', 'announcement', 'preview'): 'https://wow.zamimg.com/images/wow/icons/large/achievement_general_stayclassy.jpg'
+    }
+    
+    # Find the first matching category
+    for keywords, image_url in image_mappings.items():
+        if any(keyword in combined_text for keyword in keywords):
+            return image_url
+    
+    return None
+
+
 def create_affixes_embed(affixes_data, region='us'):
     """Creates and returns the affixes embed."""
     embed = discord.Embed(
@@ -276,6 +373,7 @@ def create_blue_tracker_embed(post_data):
     author = post_data.get('author', 'Unknown')
     time_posted = post_data.get('time_posted', 'Unknown')
     url = post_data.get('url')
+    image_url = post_data.get('image_url')  # Get the banner/image URL
     
     description_parts = []
     if author != 'Unknown':
@@ -301,8 +399,19 @@ def create_blue_tracker_embed(post_data):
         url=url if url else None
     )
     
-    # Add Blizzard-themed thumbnail
-    embed.set_thumbnail(url="https://images.blz-contentstack.com/v3/assets/blt95b381df7c12c15c/blt2477dceb7fdcaa86/5f0f9a41baa6c218a505c97d/wow-circle-blue.png")
+    # Use the post's image as banner if available, otherwise use thumbnail
+    if image_url:
+        embed.set_image(url=image_url)
+        # Also set a smaller thumbnail for consistency
+        embed.set_thumbnail(url="https://images.blz-contentstack.com/v3/assets/blt95b381df7c12c15c/blt2477dceb7fdcaa86/5f0f9a41baa6c218a505c97d/wow-circle-blue.png")
+    else:
+        # If no image, try to pick a thematic image based on post content
+        thematic_image = _get_thematic_image_for_post(post_data)
+        if thematic_image:
+            embed.set_image(url=thematic_image)
+        
+        # Always set the Blizzard thumbnail
+        embed.set_thumbnail(url="https://images.blz-contentstack.com/v3/assets/blt95b381df7c12c15c/blt2477dceb7fdcaa86/5f0f9a41baa6c218a505c97d/wow-circle-blue.png")
     
     footer_text = "Wowhead Blue Tracker | Azeroth Herald"
     if url and 'blue-tracker/topic/' in url:
@@ -321,6 +430,7 @@ def create_news_embed(article_data, is_reset_relevant=False):
     author = article_data.get('author', 'Wowhead Staff')
     time_posted = article_data.get('time_posted', 'Recently')
     url = article_data.get('url')
+    image_url = article_data.get('image_url')  # Get the banner/image URL
     
     description_parts = []
     if author != 'Wowhead Staff':
@@ -349,8 +459,19 @@ def create_news_embed(article_data, is_reset_relevant=False):
         url=url if url else None
     )
     
-    # Add Wowhead-themed thumbnail
-    embed.set_thumbnail(url="https://wow.zamimg.com/images/wow/icons/large/achievement_general_stayclassy.jpg")
+    # Use the article's image as banner if available, otherwise use thumbnail
+    if image_url:
+        embed.set_image(url=image_url)
+        # Also set a smaller thumbnail for consistency
+        embed.set_thumbnail(url="https://wow.zamimg.com/images/wow/icons/large/achievement_general_stayclassy.jpg")
+    else:
+        # If no image, try to pick a thematic image based on article content
+        thematic_image = _get_thematic_image_for_article(article_data)
+        if thematic_image:
+            embed.set_image(url=thematic_image)
+        
+        # Always set the Wowhead thumbnail
+        embed.set_thumbnail(url="https://wow.zamimg.com/images/wow/icons/large/achievement_general_stayclassy.jpg")
     
     footer_text = "Wowhead News | Azeroth Herald"
     if is_reset_relevant:
