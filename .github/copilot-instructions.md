@@ -34,17 +34,40 @@ src/
 2. Use the Cog pattern with `async def setup(bot)` function
 3. Add the module to the `command_modules` list in `bot.py`
 4. Import any utilities from `src.utils.*`
+5. **Update documentation**: Add command info to `src/commands/help.py`
+6. **Update README**: Document new features in README.md if user-facing
+
+### Adding New Utilities
+1. Create new utility files in `src/utils/` following existing patterns
+2. **Update imports**: Ensure proper import statements in relevant files
+3. **Update dependencies**: Add new packages to `requirements.txt` if needed
+4. **Document usage**: Update inline comments and docstrings
+
+### Adding New Scheduled Tasks
+1. Add new task methods to `src/tasks/scheduler.py`
+2. **Update start_tasks()**: Include new tasks in the startup routine
+3. **Update help command**: Document new automated features
+4. **Update README**: Explain new scheduling behavior
 
 ### Import Patterns
 - **From main bot**: `from src.tasks.scheduler import ScheduledTasks`
 - **Within commands**: `from src.utils.embeds import create_checklist_embed`
 - **Within tasks**: `from src.utils.embeds import create_checklist_embed`
 
+### Documentation Requirements
+**ALWAYS update relevant documentation when making changes:**
+- **README.md** - For user-facing features, setup changes, or new commands
+- **src/commands/help.py** - For new commands or changed command behavior
+- **docs/** files - For architectural changes or development process updates
+- **Inline comments** - For complex logic or non-obvious implementations
+- **Docstrings** - For new functions, classes, and methods
+
 ### Development Workflow
 1. **Start dev mode**: Use "Run Bot (Development Mode)" task or `python dev_runner.py`
 2. **Edit files**: Changes auto-reload instantly
 3. **Test commands**: Use `!test` to verify bot functionality
 4. **Check schedule**: Use `!time` to see posting schedule
+5. **Update docs**: Ensure all relevant documentation is updated
 
 ## Environment Setup
 
@@ -106,6 +129,40 @@ src/
 - Check **terminal output** for error messages
 - Verify **environment variables** if commands fail
 - Test **API commands** with and without API key
+
+## Documentation Maintenance
+
+### Critical Documentation Files
+Keep these files updated when making changes:
+
+1. **README.md** - Main project documentation
+   - Update when adding new features visible to users
+   - Update setup instructions if dependencies change
+   - Update command list if new commands are added
+
+2. **src/commands/help.py** - In-bot help system
+   - Add new commands to general help embed
+   - Add detailed help for new commands in the specific help section
+   - Update scheduling information if automated tasks change
+
+3. **docs/ARCHITECTURE.md** - Project structure documentation
+   - Update when adding new modules or changing architecture
+   - Document new design patterns or significant structural changes
+
+4. **docs/DEVELOPMENT.md** - Development process documentation
+   - Update when adding new development tasks or workflows
+   - Document new testing procedures or debugging techniques
+
+5. **Inline Documentation**
+   - Add docstrings to all new functions and classes
+   - Comment complex logic or non-obvious implementations
+   - Update existing comments when behavior changes
+
+### Documentation Quality Standards
+- Use clear, concise language
+- Include usage examples for new features
+- Maintain consistent formatting across all docs
+- Keep technical accuracy up to date with code changes
 
 ## Documentation References
 - **README.md** - Setup and basic usage

@@ -29,7 +29,9 @@ async def load_commands():
         'src.commands.affixes',
         'src.commands.cutoffs',
         'src.commands.help',
-        'src.commands.test'
+        'src.commands.test',
+        'src.commands.bluetrack',
+        'src.commands.wowhead_news'
     ]
     
     for module in command_modules:

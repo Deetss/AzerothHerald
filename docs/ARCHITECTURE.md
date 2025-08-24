@@ -20,20 +20,24 @@ AzerothHerald/
     ├── commands/         # Individual command modules
     │   ├── __init__.py
     │   ├── affixes.py    # !affixes command
+    │   ├── bluetrack.py  # !bluetrack command (Blue Tracker monitoring)
     │   ├── checklist.py  # !checklist command
     │   ├── cutoffs.py    # !cutoffs command
     │   ├── help.py       # !help command
     │   ├── test.py       # !test command
     │   ├── time.py       # !time command
-    │   └── warning.py    # !warning command
+    │   ├── warning.py    # !warning command
+    │   └── wowhead_news.py  # !news and !newssummary commands
     ├── utils/            # Utility functions
     │   ├── __init__.py
     │   ├── api.py        # API calls (Raider.IO)
+    │   ├── blue_tracker.py   # Blue Tracker scraping utility
     │   ├── embeds.py     # Discord embed creation
-    │   └── error_handler.py  # Centralized error handling
+    │   ├── error_handler.py  # Centralized error handling
+    │   └── wowhead_news.py   # Wowhead news scraping utility
     └── tasks/            # Scheduled tasks
         ├── __init__.py
-        └── scheduler.py  # Weekly posting scheduler
+        └── scheduler.py  # Weekly posting scheduler with monitoring tasks
 ```
 
 ## Benefits of Modular Structure

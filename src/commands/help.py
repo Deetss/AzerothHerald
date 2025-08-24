@@ -26,11 +26,14 @@ class HelpCommand(commands.Cog):
             embed.add_field(
                 name="📋 Weekly Commands",
                 value=(
-                    "`!checklist` - Show the complete weekly checklist\n"
-                    "`!warning` - Show the reset warning message\n"
+                    "`!checklist` - Show the complete weekly checklist with recent Blizzard updates\n"
+                    "`!warning` - Show the reset warning with recent Blizzard updates\n"
                     "`!time` - Show current time and schedule info\n"
                     "`!affixes` - Show current Mythic+ affixes\n"
                     "`!cutoffs` - Show M+ season rating cutoffs\n"
+                    "`!bluetrack` - Check for new Blizzard posts\n"
+                    "`!news` - Check for new Wowhead articles\n"
+                    "`!newssummary` - Get categorized news summary\n"
                     "`!test` - Test bot functionality"
                 ),
                 inline=False
@@ -39,8 +42,10 @@ class HelpCommand(commands.Cog):
             embed.add_field(
                 name="📅 Automatic Schedule",
                 value=(
-                    "**Monday 1:00 PM CDT** - Reset warning\n"
-                    "**Tuesday 11:00 AM CDT** - Weekly checklist"
+                    "**Monday 1:00 PM CDT** - Reset warning with recent updates\n"
+                    "**Tuesday 11:00 AM CDT** - Weekly checklist with recent updates\n"
+                    "**Every 30 minutes** - Blue tracker monitoring for new US Blizzard posts\n"
+                    "**Every 2 hours** - Wowhead news monitoring for reset-relevant articles"
                 ),
                 inline=False
             )
@@ -71,7 +76,7 @@ class HelpCommand(commands.Cog):
                     )
                     embed.add_field(
                         name="Description",
-                        value="Displays the complete WoW weekly checklist with Great Vault, world content, and profession tasks.",
+                        value="Displays the complete WoW weekly checklist with Great Vault, world content, and profession tasks. Also includes recent Blizzard updates that may affect your weekly activities.",
                         inline=False
                     )
                 elif command.name == "warning":
@@ -82,7 +87,7 @@ class HelpCommand(commands.Cog):
                     )
                     embed.add_field(
                         name="Description",
-                        value="Shows the Monday reset warning reminder. This is automatically posted every Monday.",
+                        value="Shows the Monday reset warning reminder with recent Blizzard updates. This is automatically posted every Monday and includes any important announcements affecting the weekly reset.",
                         inline=False
                     )
                 elif command.name == "time":
@@ -137,6 +142,49 @@ class HelpCommand(commands.Cog):
                     embed.add_field(
                         name="Examples",
                         value="`!cutoffs` - Shows US cutoffs\n`!cutoffs eu` - Shows EU cutoffs",
+                        inline=False
+                    )
+                elif command.name == "bluetrack":
+                    embed.add_field(
+                        name="Usage", 
+                        value="`!bluetrack [action]`",
+                        inline=False
+                    )
+                    embed.add_field(
+                        name="Description",
+                        value="Monitors Wowhead Blue Tracker for new official Blizzard posts. The bot automatically checks every 30 minutes.",
+                        inline=False
+                    )
+                    embed.add_field(
+                        name="Actions",
+                        value="`!bluetrack` - Check for new posts since last check\n`!bluetrack latest` - Show latest posts (ignores cache)\n`!bluetrack test` - Test the scraper functionality\n`!bluetrack reset` - Reset cache (admin use)",
+                        inline=False
+                    )
+                elif command.name == "news":
+                    embed.add_field(
+                        name="Usage", 
+                        value="`!news [action]`",
+                        inline=False
+                    )
+                    embed.add_field(
+                        name="Description",
+                        value="Check for new WoW-related articles from Wowhead. Filters for relevant content and reset-related news.",
+                        inline=False
+                    )
+                    embed.add_field(
+                        name="Actions",
+                        value="`!news` - Check for new articles since last check\n`!news latest` - Show latest articles (ignores cache)\n`!news reset` - Show reset-relevant articles\n`!news test` - Test the scraper functionality\n`!news clear` - Clear cache (admin use)",
+                        inline=False
+                    )
+                elif command.name == "newssummary":
+                    embed.add_field(
+                        name="Usage", 
+                        value="`!newssummary`",
+                        inline=False
+                    )
+                    embed.add_field(
+                        name="Description",
+                        value="Get a categorized summary of recent Wowhead news articles. Groups articles by Mythic+, Raids, Patches, Events, and General topics.",
                         inline=False
                     )
             else:

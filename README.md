@@ -6,7 +6,11 @@ A Discord bot for World of Warcraft players that provides weekly checklists and 
 
 - **Weekly Checklist**: Displays a comprehensive checklist of weekly WoW activities
 - **Scheduled Posts**: Automatic Monday warnings and Tuesday checklists
+- **Blue Post Integration**: Automatically includes relevant Blizzard updates in weekly reminders
+- **Wowhead News Integration**: Monitors for reset-relevant articles and news updates
 - **Mythic+ Integration**: Shows current week's affixes and season cutoffs
+- **Blue Tracker Monitoring**: Monitors Wowhead Blue Tracker for new Blizzard posts
+- **News Monitoring**: Automatically tracks Wowhead news for relevant WoW articles
 - **Manual Commands**: Full set of commands for on-demand information
 - **Modular Architecture**: Clean, maintainable code structure
 
@@ -80,18 +84,77 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed development instructions.
 
 ## Commands
 
-- `!checklist` - Displays the weekly WoW checklist
-- `!warning` - Shows the reset warning message
+- `!checklist` - Displays the weekly WoW checklist with recent Blizzard updates
+- `!warning` - Shows the reset warning message with recent Blizzard updates
 - `!time` - Shows current time and schedule information
 - `!affixes [region]` - Shows current Mythic+ affixes (requires API key)
 - `!cutoffs [region]` - Shows M+ season rating cutoffs (requires API key)
+- `!bluetrack` - Manually check for new Blizzard posts
+- `!news [action]` - Check for new Wowhead articles (check/latest/reset/test/clear)
+- `!newssummary` - Get categorized summary of recent Wowhead news
 - `!test` - Tests bot functionality
 - `!help [command]` - Shows help information
 
 ## Automatic Schedule
 
-- **Monday 1:00 PM CDT**: Weekly reset warning
-- **Tuesday 11:00 AM CDT**: New weekly checklist
+- **Monday 1:00 PM CDT**: Weekly reset warning with relevant Blizzard updates and news
+- **Tuesday 11:00 AM CDT**: New weekly checklist with relevant Blizzard updates
+- **Every 30 minutes**: Checks for new Blizzard posts on the Blue Tracker
+- **Every 2 hours**: Monitors Wowhead news for reset-relevant articles
+
+## Blue Post Integration
+
+The bot automatically monitors the Wowhead Blue Tracker for official Blizzard posts and integrates relevant information into weekly reminders:
+
+### What Gets Included
+- **Hotfixes and patches** that affect weekly activities
+- **Class and dungeon tuning** announcements
+- **Mythic+ and raid changes** for the current week
+- **Weekly event** announcements and changes
+- **Season updates** and timing information
+- **Maintenance and downtime** notifications
+
+### How It Works
+- The bot analyzes recent Blizzard posts (past 7 days) for reset-relevant content
+- Posts are categorized as "This Week", "Next Week", or "Recent Updates"
+- Information is automatically added to Monday warnings and Tuesday checklists
+- Only official posts from Blizzard Community Managers are included
+- Manual commands (`!checklist`, `!warning`) also include this information
+
+### Benefits
+- Stay informed about changes that affect your weekly routine
+- Never miss important hotfixes or tuning changes
+- Get advance notice of upcoming content or maintenance
+- See everything in one place alongside your weekly checklist
+
+## Wowhead News Integration
+
+The bot also monitors Wowhead news for relevant WoW articles and content updates:
+
+### What Gets Tracked
+- **Mythic+ guides and updates** for dungeon strategies
+- **Raid guides and analysis** for current content
+- **Class guides and rotation updates** for optimization
+- **Patch notes and previews** for upcoming changes
+- **Event coverage and previews** for seasonal content
+- **Developer interviews** and announcements
+
+### Relevance Filtering
+- Articles are filtered for WoW-specific content (excludes other Blizzard games)
+- Reset-relevant articles are prioritized for automatic posting
+- General WoW news is available through manual commands
+- Articles are categorized by type (Mythic+, Raids, Patches, Events, General)
+
+### Manual Commands
+- `!news` - Check for new articles since last check
+- `!news latest` - Get latest articles regardless of cache
+- `!news reset` - Show only reset-relevant articles
+- `!newssummary` - Get categorized summary of recent articles
+
+### Automatic Monitoring
+- Checks for new articles every 2 hours
+- Only posts reset-relevant articles automatically to avoid spam
+- Other articles are tracked but require manual commands to view
 
 ## Project Structure
 
