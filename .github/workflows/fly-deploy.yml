@@ -12,6 +12,12 @@ jobs:
     concurrency: deploy-group    # optional: ensure only one action runs at a time
     steps:
       - uses: actions/checkout@v4
+      - name: Check for non-documentation changes
+        run: |
+          if ! git diff --name-only HEAD^ HEAD | grep -qvE '\.md$'; then
+            echo "Only documentation files were changed. Skipping deployment.";
+            exit 0;
+          fi
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only
         env:

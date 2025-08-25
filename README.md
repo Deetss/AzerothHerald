@@ -161,3 +161,12 @@ Feel free to submit issues and pull requests to improve the bot!
 ## License
 
 This project is open source and available under the MIT License.
+
+## Secrets for GitHub Actions
+
+### FLY_API_TOKEN
+- Ensure the `FLY_API_TOKEN` is added as a secret in your GitHub repository settings.
+- This token is required for automatic deployment using Fly.io.
+- Add it under `Settings > Secrets and variables > Actions` in your GitHub repository.
+
+For more details on setting up GitHub Actions for deployment, refer to the Fly.io documentation.
