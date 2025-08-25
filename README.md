@@ -53,9 +53,6 @@ For development with auto-reload functionality:
 ```bash
 # Advanced development mode (recommended)
 python dev_runner.py
-
-# Simple development mode (no external dependencies)
-python simple_dev_runner.py
 ```
 
 See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed development instructions.
