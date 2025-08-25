@@ -48,12 +48,7 @@ A Discord bot for World of Warcraft players that provides weekly checklists and 
 
 ### Development Mode
 
-For development with auto-reload functionality:
-
-```bash
-# Advanced development mode (recommended)
-python dev_runner.py
-```
+The bot includes auto-reload functionality for development mode. Use `dev_runner.py` for advanced file watching and instant reloads on file changes.
 
 See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed development instructions.
 
@@ -143,7 +138,7 @@ The bot also monitors Wowhead news for relevant WoW articles and content updates
 The bot uses a modular architecture for better maintainability:
 
 ```
-├── bot.py                 # Main bot entry point
+├── bot.py                # Main bot entry point
 ├── commands/             # Individual command modules
 ├── utils/                # Utility functions (embeds, API calls, error handling)
 └── tasks/                # Scheduled tasks

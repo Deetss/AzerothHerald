@@ -13,14 +13,14 @@ You can run these tasks from VS Code's Command Palette (`Ctrl+Shift+P` → "Task
 - **Features**:
   - 🔄 Instant auto-reload on file changes
   - 📤 Real-time bot output display
-  - 🛡️ Graceful shutdown handling
+  - 🛠️ Graceful shutdown handling
   - 👀 Advanced file watching with `watchdog` library
   
 ### 2. Run Bot (Simple Dev Mode) - **Backup Option**
 - **File**: `simple_dev_runner.py` 
 - **Features**:
   - 🔄 Auto-reload on file changes (checks every 2 seconds)
-  - 🛡️ Graceful shutdown handling
+  - 🛠️ Graceful shutdown handling
   - 📦 No external dependencies (uses only built-in Python)
 
 ### 3. Run Discord Bot - **Production**
@@ -83,3 +83,7 @@ The advanced development mode (`dev_runner.py`) is more responsive but requires 
 ## Production Deployment
 
 When deploying to production, always use the standard `python bot.py` command or the "Run Discord Bot" task, not the development modes.
+
+## Testing Enhanced Visual Experience
+
+Blue Tracker and Wowhead News commands now include thematic banner images based on content keywords. Test these commands to ensure the images are relevant and visually appealing.

@@ -51,3 +51,6 @@ Use the `!time` command to see when the next scheduled posts will occur and veri
 - `!cutoffs` - Default US region season cutoffs
 - `!cutoffs eu` - European region season cutoffs
 - Valid regions: us, eu, kr, tw, cn
+
+### Testing Banner Images
+Ensure that thematic banner images for Blue Tracker and Wowhead News commands are relevant and visually appealing.

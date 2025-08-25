@@ -49,6 +49,10 @@ AzerothHerald/
 5. **Scalability**: Adding new commands is as simple as creating a new file in the `src/commands/` directory.
 6. **Clear Package Structure**: The `src/` directory creates a clear Python package hierarchy.
 
+### Enhanced Visual Experience
+
+Blue Tracker and Wowhead News commands now include thematic banner images based on content keywords. This improves the visual appeal and relevance of the embeds.
+
 ## Import Structure
 
 With the new `src/` directory structure, all imports follow a consistent pattern:
