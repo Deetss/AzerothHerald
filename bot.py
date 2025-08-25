@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from src.tasks.scheduler import ScheduledTasks
 from src.utils.error_handler import handle_command_error
 
-# --- 1. INITIAL SETUP ---
 # Load environment variables from .env file
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -19,7 +18,6 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 # Initialize scheduler
 scheduler = None
 
-# --- 2. COMMAND LOADING ---
 async def load_commands():
     """Load all command modules."""
     command_modules = [
@@ -41,7 +39,7 @@ async def load_commands():
         except Exception as e:
             print(f"[ERROR] Failed to load {module}: {e}")
 
-# --- 3. BOT EVENTS ---
+
 @bot.event
 async def on_ready():
     """Event that runs when the bot has successfully connected to Discord."""
@@ -59,7 +57,6 @@ async def on_command_error(ctx, error):
     """Event that handles command errors."""
     await handle_command_error(ctx, error)
 
-# --- 4. MAIN EXECUTION ---
 async def main():
     """Main function to start the bot."""
     # Load all command modules
@@ -85,6 +82,5 @@ async def main():
     finally:
         await bot.close()
 
-# --- 5. RUN THE BOT ---
 if __name__ == "__main__":
     asyncio.run(main())

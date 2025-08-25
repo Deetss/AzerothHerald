@@ -1,0 +1,13 @@
+# fly.toml app configuration file generated for azerothherald on 2025-08-25T08:35:20-05:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'azerothherald'
+primary_region = 'dfw'
+
+[build]
+builder = 'paketobuildpacks/builder:base'
+
+[[vm]]
+  size = 'shared-cpu-1x'

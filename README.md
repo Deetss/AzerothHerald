@@ -58,7 +58,7 @@ python dev_runner.py
 python simple_dev_runner.py
 ```
 
-See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed development instructions.
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed development instructions.
 
 ## Configuration
 
@@ -105,28 +105,7 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed development instructions.
 
 ## Blue Post Integration
 
-The bot automatically monitors the Wowhead Blue Tracker for official Blizzard posts and integrates relevant information into weekly reminders:
-
-### What Gets Included
-- **Hotfixes and patches** that affect weekly activities
-- **Class and dungeon tuning** announcements
-- **Mythic+ and raid changes** for the current week
-- **Weekly event** announcements and changes
-- **Season updates** and timing information
-- **Maintenance and downtime** notifications
-
-### How It Works
-- The bot analyzes recent Blizzard posts (past 7 days) for reset-relevant content
-- Posts are categorized as "This Week", "Next Week", or "Recent Updates"
-- Information is automatically added to Monday warnings and Tuesday checklists
-- Only official posts from Blizzard Community Managers are included
-- Manual commands (`!checklist`, `!warning`) also include this information
-
-### Benefits
-- Stay informed about changes that affect your weekly routine
-- Never miss important hotfixes or tuning changes
-- Get advance notice of upcoming content or maintenance
-- See everything in one place alongside your weekly checklist
+The bot automatically monitors Blizzard's Blue Tracker for new posts and includes them in weekly reminders.
 
 ## Enhanced Visual Experience
 
@@ -156,26 +135,6 @@ When posts or articles don't have specific images, the bot automatically selects
 ## Wowhead News Integration
 
 The bot also monitors Wowhead news for relevant WoW articles and content updates:
-
-### What Gets Tracked
-- **Mythic+ guides and updates** for dungeon strategies
-- **Raid guides and analysis** for current content
-- **Class guides and rotation updates** for optimization
-- **Patch notes and previews** for upcoming changes
-- **Event coverage and previews** for seasonal content
-- **Developer interviews** and announcements
-
-### Relevance Filtering
-- Articles are filtered for WoW-specific content (excludes other Blizzard games)
-- Reset-relevant articles are prioritized for automatic posting
-- General WoW news is available through manual commands
-- Articles are categorized by type (Mythic+, Raids, Patches, Events, General)
-
-### Manual Commands
-- `!news` - Check for new articles since last check
-- `!news latest` - Get latest articles regardless of cache
-- `!news reset` - Show only reset-relevant articles
-- `!newssummary` - Get categorized summary of recent articles
 
 ### Automatic Monitoring
 - Checks for new articles every 2 hours
