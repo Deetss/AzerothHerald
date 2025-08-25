@@ -14,7 +14,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check for non-documentation changes
         run: |
-          if ! git diff --name-only HEAD^ HEAD | grep -qvE '\.md$'; then
+          # Get the list of changed files
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+          
+          # Check if all changed files are documentation files (.md)
+          if echo "$CHANGED_FILES" | grep -qvE '\.md$'; then
+            echo "Non-documentation changes detected. Proceeding with deployment.";
+          else
             echo "Only documentation files were changed. Skipping deployment.";
             exit 0;
           fi
