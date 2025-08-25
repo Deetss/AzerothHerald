@@ -15,7 +15,11 @@ jobs:
       - name: Check for non-documentation changes
         run: |
           # Get the list of changed files
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          else
+            CHANGED_FILES=$(git diff --name-only HEAD)
+          fi
           
           # Check if all changed files are documentation files (.md)
           if echo "$CHANGED_FILES" | grep -qvE '\.md$'; then
