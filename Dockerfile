@@ -13,6 +13,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Install system dependencies if needed (for some Python packages)
 RUN apt-get update && apt-get install -y \
     gcc \
+    pgrep \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first to leverage Docker layer caching
