@@ -29,5 +29,9 @@ RUN useradd --create-home --shell /bin/bash app \
     && chown -R app:app /app
 USER app
 
+# Health check for Coolify - just verify the Python process is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD pgrep -f "python bot.py" || exit 1
+
 # Default command to run the bot
 CMD ["python", "bot.py"]
