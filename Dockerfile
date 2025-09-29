@@ -30,11 +30,11 @@ RUN useradd --create-home --shell /bin/bash app \
 USER app
 
 # Expose port (not strictly necessary for Discord bots, but good practice)
-EXPOSE 8000
+# EXPOSE 8000
 
 # Health check to ensure bot is running (optional)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+#     CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
 
 # Default command to run the bot
 CMD ["python", "bot.py"]
