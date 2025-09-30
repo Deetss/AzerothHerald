@@ -50,6 +50,16 @@ A Discord bot for World of Warcraft players that provides weekly checklists and 
 
 The bot includes auto-reload functionality for development mode. Use `dev_runner.py` for advanced file watching and instant reloads on file changes.
 
+#### Docker Development (Optional)
+For dev/prod parity, you can also run the bot in Docker:
+```bash
+# Development with hot reload
+./docker-dev.sh dev
+
+# Production mode  
+./docker-dev.sh prod
+```
+
 See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed development instructions.
 
 ## Configuration

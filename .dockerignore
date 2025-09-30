@@ -1,2 +1,7 @@
 fly.toml
 .venv
+.git
+.gitignore
+README.md
+docs/
+.env.example

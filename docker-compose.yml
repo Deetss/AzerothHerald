@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  # Development with hot reload
+  bot-dev:
+    build: .
+    env_file: .env
+    volumes:
+      - .:/app
+    command: python dev_runner.py
+
+  # Production (same as deployment)
+  bot-prod:
+    build: .
+    env_file: .env
