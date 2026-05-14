@@ -15,7 +15,7 @@ async def handle_command_error(ctx, error):
             description=f"Sorry, I don't recognize the command `{ctx.message.content}`",
             color=discord.Color.red()
         )
-        
+
         embed.add_field(
             name="Available Commands",
             value=(
@@ -29,16 +29,16 @@ async def handle_command_error(ctx, error):
             ),
             inline=False
         )
-        
+
         embed.set_footer(text="Use !help for detailed command information | Azeroth Herald")
         await ctx.send(embed=embed)
         return
-    
+
     # Missing required arguments
     elif isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed(
             title="❌ Missing Arguments",
-            description=f"You're missing some required arguments for this command.",
+            description="You're missing some required arguments for this command.",
             color=discord.Color.red()
         )
         embed.add_field(
@@ -48,7 +48,7 @@ async def handle_command_error(ctx, error):
         )
         await ctx.send(embed=embed)
         return
-    
+
     # Command is on cooldown
     elif isinstance(error, commands.CommandOnCooldown):
         embed = discord.Embed(
@@ -58,7 +58,7 @@ async def handle_command_error(ctx, error):
         )
         await ctx.send(embed=embed)
         return
-    
+
     # User lacks permissions
     elif isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
@@ -68,7 +68,7 @@ async def handle_command_error(ctx, error):
         )
         await ctx.send(embed=embed)
         return
-    
+
     # Bot lacks permissions
     elif isinstance(error, commands.BotMissingPermissions):
         embed = discord.Embed(
@@ -83,7 +83,7 @@ async def handle_command_error(ctx, error):
         )
         await ctx.send(embed=embed)
         return
-    
+
     # Generic error handling
     else:
         embed = discord.Embed(
@@ -97,7 +97,7 @@ async def handle_command_error(ctx, error):
             inline=False
         )
         await ctx.send(embed=embed)
-        
+
         # Log the error for debugging
         print(f"Unhandled command error: {error}")
         print(f"Command: {ctx.command}")

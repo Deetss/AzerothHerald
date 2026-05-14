@@ -20,9 +20,9 @@ class HelpCommand(commands.Cog):
                 description="Your companion for World of Warcraft weekly tasks with enhanced visual experience!",
                 color=discord.Color.gold()
             )
-            
+
             embed.set_thumbnail(url="https://static.wikia.nocookie.net/wowpedia/images/3/3e/Alliance_Crest_of_Lordaeron.png")
-            
+
             embed.add_field(
                 name="📋 Weekly Commands",
                 value=(
@@ -38,7 +38,7 @@ class HelpCommand(commands.Cog):
                 ),
                 inline=False
             )
-            
+
             embed.add_field(
                 name="📅 Automatic Schedule",
                 value=(
@@ -49,7 +49,7 @@ class HelpCommand(commands.Cog):
                 ),
                 inline=False
             )
-            
+
             embed.add_field(
                 name="ℹ️ More Info",
                 value=(
@@ -59,9 +59,9 @@ class HelpCommand(commands.Cog):
                 ),
                 inline=False
             )
-            
+
             embed.set_footer(text="For Azeroth! | Enhanced with banner images | Made with ❤️ for the WoW community")
-            
+
         else:
             # Show help for specific command
             command = self.bot.get_command(command_name.lower())
@@ -71,10 +71,10 @@ class HelpCommand(commands.Cog):
                     description=command.help or "No description available.",
                     color=discord.Color.blue()
                 )
-                
+
                 if command.name == "checklist":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!checklist`",
                         inline=False
                     )
@@ -85,7 +85,7 @@ class HelpCommand(commands.Cog):
                     )
                 elif command.name == "warning":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!warning`",
                         inline=False
                     )
@@ -96,7 +96,7 @@ class HelpCommand(commands.Cog):
                     )
                 elif command.name == "time":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!time`",
                         inline=False
                     )
@@ -107,7 +107,7 @@ class HelpCommand(commands.Cog):
                     )
                 elif command.name == "test":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!test`",
                         inline=False
                     )
@@ -118,7 +118,7 @@ class HelpCommand(commands.Cog):
                     )
                 elif command.name == "affixes":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!affixes [region]`",
                         inline=False
                     )
@@ -134,7 +134,7 @@ class HelpCommand(commands.Cog):
                     )
                 elif command.name == "cutoffs":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!cutoffs [region]`",
                         inline=False
                     )
@@ -150,7 +150,7 @@ class HelpCommand(commands.Cog):
                     )
                 elif command.name == "bluetrack":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!bluetrack [action]`",
                         inline=False
                     )
@@ -166,7 +166,7 @@ class HelpCommand(commands.Cog):
                     )
                 elif command.name == "news":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!news [action]`",
                         inline=False
                     )
@@ -182,7 +182,7 @@ class HelpCommand(commands.Cog):
                     )
                 elif command.name == "newssummary":
                     embed.add_field(
-                        name="Usage", 
+                        name="Usage",
                         value="`!newssummary`",
                         inline=False
                     )
@@ -202,7 +202,7 @@ class HelpCommand(commands.Cog):
                     value="Use `!help` to see all available commands.",
                     inline=False
                 )
-        
+
         await ctx.send(embed=embed)
 
 

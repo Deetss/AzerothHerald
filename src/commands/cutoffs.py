@@ -4,6 +4,7 @@ Cutoffs command for the Azeroth Herald bot.
 
 import discord
 from discord.ext import commands
+
 from src.utils.api import fetch_season_cutoffs
 from src.utils.embeds import create_season_cutoffs_embed
 
@@ -25,7 +26,7 @@ class CutoffsCommand(commands.Cog):
             )
             await ctx.send(embed=embed)
             return
-        
+
         # Show loading message
         loading_embed = discord.Embed(
             title="⏳ Loading Season Cutoffs...",
@@ -33,11 +34,11 @@ class CutoffsCommand(commands.Cog):
             color=discord.Color.orange()
         )
         loading_message = await ctx.send(embed=loading_embed)
-        
+
         try:
             # Fetch cutoffs data
             cutoffs_data, error = await fetch_season_cutoffs(region.lower())
-            
+
             if error:
                 embed = discord.Embed(
                     title="❌ Failed to Fetch Cutoffs",
@@ -51,11 +52,11 @@ class CutoffsCommand(commands.Cog):
                 )
                 await loading_message.edit(embed=embed)
                 return
-            
+
             # Create and send the cutoffs embed
             embed = create_season_cutoffs_embed(cutoffs_data, region.lower())
             await loading_message.edit(embed=embed)
-            
+
         except Exception as e:
             embed = discord.Embed(
                 title="❗ Unexpected Error",

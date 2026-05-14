@@ -5,15 +5,24 @@ Thanks for your interest in improving the bot! Contributions are welcome — bug
 ## Quick start
 
 1. Fork the repo and clone your fork.
-2. Install dependencies:
+2. Install runtime and dev dependencies:
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirements-dev.txt
    ```
 3. Copy `.env.example` to `.env` and fill in a Discord bot token + test channel ID. Use a **test bot** in a personal server — never your production token.
 4. Run in dev mode:
    ```bash
    python dev_runner.py
    ```
+
+### Running tests and lint
+
+```bash
+ruff check .   # lint
+pytest         # tests
+```
+
+CI runs both on every PR against Python 3.9, 3.11, and 3.12.
 
 See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for more dev-mode details.
 

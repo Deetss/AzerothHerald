@@ -1,8 +1,10 @@
-import os
 import asyncio
+import os
+
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+
 from src.tasks.scheduler import ScheduledTasks
 from src.utils.error_handler import handle_command_error
 
@@ -31,7 +33,7 @@ async def load_commands():
         'src.commands.bluetrack',
         'src.commands.wowhead_news'
     ]
-    
+
     for module in command_modules:
         try:
             await bot.load_extension(module)
@@ -44,10 +46,10 @@ async def load_commands():
 async def on_ready():
     """Event that runs when the bot has successfully connected to Discord."""
     global scheduler
-    
+
     print(f'Logged in as {bot.user.name} ({bot.user.id})')
     print('Bot is online and ready.')
-    
+
     # Initialize and start scheduled tasks
     scheduler = ScheduledTasks(bot)
     scheduler.start_tasks()
@@ -61,12 +63,12 @@ async def main():
     """Main function to start the bot."""
     # Load all command modules
     await load_commands()
-    
+
     # Start the bot
     if TOKEN is None:
         print("ERROR: DISCORD_TOKEN not found. Make sure you have a .env file with the token.")
         return
-    
+
     # Check for optional API key
     raider_io_api_key = os.getenv('RAIDER_IO_API_KEY')
     if raider_io_api_key is None:
@@ -74,7 +76,7 @@ async def main():
         print("Add RAIDER_IO_API_KEY=your_key_here to your .env file to enable API functionality.")
     else:
         print("All environment variables loaded successfully.")
-    
+
     try:
         await bot.start(TOKEN)
     except KeyboardInterrupt:

@@ -1,5 +1,6 @@
 # Azeroth Herald — WoW Discord Bot
 
+[![CI](https://github.com/Deetss/AzerothHerald/actions/workflows/ci.yml/badge.svg)](https://github.com/Deetss/AzerothHerald/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![discord.py](https://img.shields.io/badge/discord.py-2.x-5865F2.svg)](https://github.com/Rapptz/discord.py)

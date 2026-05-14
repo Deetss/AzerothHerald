@@ -78,12 +78,19 @@ Route command errors through `src/utils/error_handler.py`. Surface user-friendly
 ## Dev workflow
 
 ```bash
-pip install -r requirements.txt
-cp .env.example .env   # fill in your token + channel id
-python dev_runner.py   # auto-reload on save
+pip install -r requirements-dev.txt    # runtime + lint + test deps
+cp .env.example .env                   # fill in your token + channel id
+python dev_runner.py                   # auto-reload on save
 ```
 
-Quick smoke tests once the bot is running in a server:
+### Local validation before committing
+
+```bash
+ruff check .   # must pass — CI enforces this
+pytest         # must pass — CI enforces this
+```
+
+### Live-bot smoke tests once running
 
 - `!test` — sanity check
 - `!time` — verify schedule loaded
