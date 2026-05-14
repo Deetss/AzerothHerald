@@ -115,7 +115,7 @@ def _add_blue_post_fields_to_embed(embed: discord.Embed, blue_post_summary: Dict
         this_week_posts = blue_post_summary['this_week']
         this_week_text = ""
 
-        for i, post in enumerate(this_week_posts[:3]):  # Limit to 3 posts
+        for post in this_week_posts[:3]:  # Limit to 3 posts
             post_line = f"• **{post['title'][:60]}{'...' if len(post['title']) > 60 else ''}**"
             if post.get('url'):
                 post_line = f"• **[{post['title'][:60]}{'...' if len(post['title']) > 60 else ''}]({post['url']})**"
@@ -133,7 +133,7 @@ def _add_blue_post_fields_to_embed(embed: discord.Embed, blue_post_summary: Dict
         next_week_posts = blue_post_summary['next_week']
         next_week_text = ""
 
-        for i, post in enumerate(next_week_posts[:2]):  # Limit to 2 posts for next week
+        for post in next_week_posts[:2]:  # Limit to 2 posts for next week
             post_line = f"• **{post['title'][:60]}{'...' if len(post['title']) > 60 else ''}**"
             if post.get('url'):
                 post_line = f"• **[{post['title'][:60]}{'...' if len(post['title']) > 60 else ''}]({post['url']})**"
@@ -152,7 +152,7 @@ def _add_blue_post_fields_to_embed(embed: discord.Embed, blue_post_summary: Dict
         if general_posts:
             general_text = ""
 
-            for i, post in enumerate(general_posts[:2]):  # Limit to 2 general posts
+            for post in general_posts[:2]:  # Limit to 2 general posts
                 post_line = f"• **{post['title'][:60]}{'...' if len(post['title']) > 60 else ''}**"
                 if post.get('url'):
                     post_line = f"• **[{post['title'][:60]}{'...' if len(post['title']) > 60 else ''}]({post['url']})**"
