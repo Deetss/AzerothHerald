@@ -4,10 +4,8 @@
 		{
 			"label": "Run Discord Bot",
 			"type": "shell",
-			"command": "C:/Users/dylan/OneDrive/Desktop/AzerothHerald/.venv/Scripts/python.exe",
-			"args": [
-				"bot.py"
-			],
+			"command": "python",
+			"args": ["bot.py"],
 			"isBackground": true,
 			"problemMatcher": [],
 			"group": "build",
@@ -23,29 +21,8 @@
 		{
 			"label": "Run Bot (Development Mode)",
 			"type": "shell",
-			"command": "C:/Users/dylan/OneDrive/Desktop/AzerothHerald/.venv/Scripts/python.exe",
-			"args": [
-				"dev_runner.py"
-			],
-			"isBackground": true,
-			"group": "build",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "dedicated",
-				"showReuseMessage": false,
-				"clear": true
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Run Bot (Simple Dev Mode)",
-			"type": "shell",
-			"command": "C:/Users/dylan/OneDrive/Desktop/AzerothHerald/.venv/Scripts/python.exe",
-			"args": [
-				"simple_dev_runner.py"
-			],
+			"command": "python",
+			"args": ["dev_runner.py"],
 			"isBackground": true,
 			"group": "build",
 			"presentation": {
@@ -61,12 +38,8 @@
 		{
 			"label": "Install Dependencies",
 			"type": "shell",
-			"command": "C:/Users/dylan/OneDrive/Desktop/AzerothHerald/.venv/Scripts/pip.exe",
-			"args": [
-				"install",
-				"-r",
-				"requirements.txt"
-			],
+			"command": "pip",
+			"args": ["install", "-r", "requirements.txt"],
 			"group": "build",
 			"presentation": {
 				"echo": true,
@@ -79,9 +52,7 @@
 		{
 			"label": "Setup Development Environment",
 			"dependsOrder": "sequence",
-			"dependsOn": [
-				"Install Dependencies"
-			],
+			"dependsOn": ["Install Dependencies"],
 			"group": "build",
 			"presentation": {
 				"echo": true,

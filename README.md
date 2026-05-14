@@ -1,4 +1,9 @@
-# Azeroth Herald - WoW Discord Bot
+# Azeroth Herald — WoW Discord Bot
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![discord.py](https://img.shields.io/badge/discord.py-2.x-5865F2.svg)](https://github.com/Rapptz/discord.py)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 A Discord bot for World of Warcraft players that provides weekly checklists and reminders for important in-game activities.
 
@@ -27,7 +32,7 @@ A Discord bot for World of Warcraft players that provides weekly checklists and 
 
 1. Clone this repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Deetss/AzerothHerald.git
    cd AzerothHerald
    ```
 
@@ -158,11 +163,15 @@ For detailed information about the architecture, see [docs/ARCHITECTURE.md](docs
 
 ## Contributing
 
-Feel free to submit issues and pull requests to improve the bot!
+Contributions are very welcome — bug reports, fixes, features, and docs. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, conventions, and the PR checklist. All participants are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Built with AI agents?
+
+This repo is friendly to AI-assisted development. Project-wide guidance for AI coding agents (Claude Code, Cursor, Codex, Aider, Zed, Continue, etc.) lives in [AGENTS.md](AGENTS.md) — point your tool at that file.
 
 ## License
 
-This project is open source and available under the MIT License.
+Released under the [MIT License](LICENSE).
 
 ## Secrets for GitHub Actions
 
