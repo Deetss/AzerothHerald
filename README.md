@@ -5,161 +5,149 @@
 [![discord.py](https://img.shields.io/badge/discord.py-2.x-5865F2.svg)](https://github.com/Rapptz/discord.py)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-A Discord bot for World of Warcraft players that provides weekly checklists and reminders for important in-game activities.
+A Discord bot for World of Warcraft players. Posts weekly checklists, reset warnings, and surfaces relevant Blizzard blue posts and Wowhead news on a schedule.
+
+## Contents
+
+- [Features](#features)
+- [Quick start](#quick-start)
+- [Configuration](#configuration)
+- [Commands](#commands)
+- [Automatic schedule](#automatic-schedule)
+- [Project structure](#project-structure)
+- [Deployment](#deployment)
+- [Development](#development)
+- [Contributing](#contributing)
+- [Built with AI agents?](#built-with-ai-agents)
+- [License](#license)
 
 ## Features
 
-- **Weekly Checklist**: Displays a comprehensive checklist of weekly WoW activities
-- **Scheduled Posts**: Automatic Monday warnings and Tuesday checklists
-- **Blue Post Integration**: Automatically includes relevant Blizzard updates in weekly reminders
-- **Wowhead News Integration**: Monitors for reset-relevant articles and news updates
-- **Enhanced Visual Experience**: Banner images and thematic visuals for posts and articles
-- **Mythic+ Integration**: Shows current week's affixes and season cutoffs
-- **Blue Tracker Monitoring**: Monitors Wowhead Blue Tracker for new Blizzard posts
-- **News Monitoring**: Automatically tracks Wowhead news for relevant WoW articles
-- **Manual Commands**: Full set of commands for on-demand information
-- **Modular Architecture**: Clean, maintainable code structure
+- **Weekly checklist** of WoW activities, posted on reset
+- **Reset warning** the day before, with relevant blue posts attached
+- **Mythic+ integration** — current affixes and season cutoffs via Raider.IO
+- **Blue Tracker monitoring** — polls Wowhead's Blue Tracker every 30 minutes for new Blizzard posts
+- **Wowhead news monitoring** — polls every 2 hours, only auto-posts reset-relevant articles to avoid spam
+- **Banner images & thematic fallbacks** — posts use the source's image when available, with WoW-themed fallback art selected by content type
+- **Modular architecture** — one Cog per command, easy to extend
 
-## Setup
+## Quick start
 
-### Prerequisites
-
-- Python 3.8 or higher
-- A Discord bot token
-- Discord server with appropriate permissions
-
-### Installation
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/Deetss/AzerothHerald.git
-   cd AzerothHerald
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Configure environment variables:
-   - Copy `.env.example` to `.env`
-   - Add your Discord bot token to the `.env` file
-   - Set your target channel ID in the `.env` file
-
-4. Run the bot:
-   ```bash
-   python bot.py
-   ```
-
-### Development Mode
-
-The bot includes auto-reload functionality for development mode. Use `dev_runner.py` for advanced file watching and instant reloads on file changes.
-
-#### Docker Development (Optional)
-For dev/prod parity, you can also run the bot in Docker:
 ```bash
-# Development with hot reload
-./docker-dev.sh dev
-
-# Production mode  
-./docker-dev.sh prod
+git clone https://github.com/Deetss/AzerothHerald.git
+cd AzerothHerald
+pip install -r requirements.txt
+cp .env.example .env   # fill in DISCORD_TOKEN and TARGET_CHANNEL_ID
+python bot.py
 ```
 
-See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed development instructions.
+Requires **Python 3.8+** and a Discord bot token with the **Message Content Intent** enabled.
 
 ## Configuration
 
-### Environment Variables
+Environment variables (loaded from `.env`):
 
-- `DISCORD_TOKEN`: Your Discord bot token (required)
-- `TARGET_CHANNEL_ID`: The Discord channel ID where the bot will post (required)
-- `RAIDER_IO_API_KEY`: Raider.IO API key for M+ data (optional)
+| Variable | Required | Purpose |
+| --- | :---: | --- |
+| `DISCORD_TOKEN` | yes | Bot token from the Discord Developer Portal |
+| `TARGET_CHANNEL_ID` | yes | Channel ID for scheduled posts |
+| `RAIDER_IO_API_KEY` | no | Enables `!affixes` and `!cutoffs` |
 
-### Getting a Discord Bot Token
+### Getting a Discord bot token
 
-1. Go to the [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application
-3. Go to the "Bot" section
-4. Create a bot and copy the token
-5. Add the token to your `.env` file
+1. Go to the [Discord Developer Portal](https://discord.com/developers/applications) and create an application.
+2. Under **Bot**, click *Add Bot* and copy the token.
+3. Enable the **Message Content Intent** (required for prefix commands).
+4. Paste the token into `.env`.
 
-### Getting a Channel ID
+### Getting a channel ID
 
-1. Enable Developer Mode in Discord (User Settings > Advanced)
-2. Right-click on the channel you want to use
-3. Click "Copy Channel ID"
-4. Add the ID to your `.env` file
+Enable Developer Mode (User Settings → Advanced), right-click any channel, and pick *Copy Channel ID*.
+
+### Inviting the bot
+
+Generate an OAuth2 URL with the `bot` scope and at minimum these permissions: *Read Messages*, *Send Messages*, *Embed Links*, *Attach Files*.
 
 ## Commands
 
-- `!checklist` - Displays the weekly WoW checklist with recent Blizzard updates
-- `!warning` - Shows the reset warning message with recent Blizzard updates
-- `!time` - Shows current time and schedule information
-- `!affixes [region]` - Shows current Mythic+ affixes (requires API key)
-- `!cutoffs [region]` - Shows M+ season rating cutoffs (requires API key)
-- `!bluetrack` - Manually check for new Blizzard posts
-- `!news [action]` - Check for new Wowhead articles (check/latest/reset/test/clear)
-- `!newssummary` - Get categorized summary of recent Wowhead news
-- `!test` - Tests bot functionality
-- `!help [command]` - Shows help information
+Prefix is `!`.
 
-## Automatic Schedule
+| Command | Description |
+| --- | --- |
+| `!checklist` | Weekly WoW activities checklist with recent blue posts |
+| `!warning` | Reset warning message with recent blue posts |
+| `!time` | Current UTC time and the next scheduled posts |
+| `!affixes [region]` | Current Mythic+ affixes — *requires `RAIDER_IO_API_KEY`* |
+| `!cutoffs [region]` | M+ season rating cutoffs — *requires `RAIDER_IO_API_KEY`* |
+| `!bluetrack` | Manually check for new Blizzard blue posts |
+| `!news [check\|latest\|reset\|test\|clear]` | Inspect or refresh Wowhead news state |
+| `!newssummary` | Categorized summary of recent Wowhead news |
+| `!test` | Sanity check that the bot is responsive |
+| `!help [command]` | Help for all commands or a specific one |
 
-- **Monday 1:00 PM CDT**: Weekly reset warning with relevant Blizzard updates and news
-- **Tuesday 11:00 AM CDT**: New weekly checklist with relevant Blizzard updates
-- **Every 30 minutes**: Checks for new Blizzard posts on the Blue Tracker
-- **Every 2 hours**: Monitors Wowhead news for reset-relevant articles
+Regions for `!affixes` / `!cutoffs`: `us`, `eu`, `kr`, `tw`, `cn` (default: `us`).
 
-## Blue Post Integration
+## Automatic schedule
 
-The bot automatically monitors Blizzard's Blue Tracker for new posts and includes them in weekly reminders.
+All times are fixed in UTC. Local US-Central times are approximate and shift by one hour across daylight saving transitions.
 
-## Enhanced Visual Experience
+| When (UTC) | Local (US Central) | What |
+| --- | --- | --- |
+| Monday 18:00 | 1:00 PM CDT / 12:00 PM CST | Reset warning + blue posts |
+| Tuesday 16:00 | 11:00 AM CDT / 10:00 AM CST | Weekly checklist + blue posts |
+| Every 30 min | — | Blue Tracker poll (US region) |
+| Every 2 hours | — | Wowhead news poll (auto-posts only reset-relevant articles) |
 
-The bot now includes rich visual elements to make posts more engaging and informative:
-
-### Banner Images
-- **Blue Posts**: Display banner images from the original posts when available
-- **News Articles**: Show featured images from Wowhead articles
-- **Automatic Fallbacks**: When original images aren't available, thematic WoW images are used based on content
-
-### Thematic Image Selection
-When posts or articles don't have specific images, the bot automatically selects appropriate WoW-themed images based on content:
-
-- **Mythic+ content**: Dungeon achievement images
-- **Raid content**: Raid boss and encounter images  
-- **PvP content**: Arena and battleground achievement images
-- **Class updates**: Character and specialization images
-- **Maintenance/Hotfixes**: Technical and engineering themed images
-- **Seasonal content**: Event and celebration images
-- **General updates**: WoW logo and general achievement images
-
-### Visual Consistency
-- All embeds maintain consistent branding with appropriate thumbnails
-- Color coding helps distinguish between different types of content
-- Clean layout ensures information remains readable while being visually appealing
-
-## Wowhead News Integration
-
-The bot also monitors Wowhead news for relevant WoW articles and content updates:
-
-### Automatic Monitoring
-- Checks for new articles every 2 hours
-- Only posts reset-relevant articles automatically to avoid spam
-- Other articles are tracked but require manual commands to view
-
-## Project Structure
-
-The bot uses a modular architecture for better maintainability:
+## Project structure
 
 ```
-├── bot.py                # Main bot entry point
-├── commands/             # Individual command modules
-├── utils/                # Utility functions (embeds, API calls, error handling)
-└── tasks/                # Scheduled tasks
+.
+├── bot.py                # Entry point — loads cogs, starts scheduler
+├── dev_runner.py         # Dev runner with watchdog-based auto-reload
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+├── docker-dev.sh
+├── src/
+│   ├── commands/         # One Cog per command
+│   ├── utils/            # Embeds, API clients, scrapers, error handling
+│   └── tasks/            # Scheduled background loops
+└── docs/                 # Architecture and development notes
 ```
 
-For detailed information about the architecture, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full layout and design rationale.
+
+## Deployment
+
+### Docker
+
+```bash
+./docker-dev.sh dev    # development with hot reload
+./docker-dev.sh prod   # production mode
+```
+
+Or with `docker compose` directly:
+
+```bash
+docker compose up bot-dev    # development
+docker compose up bot-prod   # production
+```
+
+The bot reads its config from `.env`, so make sure that file exists alongside the compose file before starting.
+
+### Heroku / Worker hosts
+
+A `Procfile` is included (`worker: python bot.py`) for platforms that use it.
+
+## Development
+
+Use `dev_runner.py` for auto-reload on file changes:
+
+```bash
+python dev_runner.py
+```
+
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for details on the dev runner, VS Code tasks, and debugging tips.
 
 ## Contributing
 
@@ -167,17 +155,8 @@ Contributions are very welcome — bug reports, fixes, features, and docs. See [
 
 ## Built with AI agents?
 
-This repo is friendly to AI-assisted development. Project-wide guidance for AI coding agents (Claude Code, Cursor, Codex, Aider, Zed, Continue, etc.) lives in [AGENTS.md](AGENTS.md) — point your tool at that file.
+This repo is friendly to AI-assisted development. Project-wide guidance for AI coding agents (Claude Code, Cursor, Codex, Aider, Zed, Continue, etc.) lives in [AGENTS.md](AGENTS.md) — point your tool at that file rather than duplicating guidance per-tool.
 
 ## License
 
 Released under the [MIT License](LICENSE).
-
-## Secrets for GitHub Actions
-
-### FLY_API_TOKEN
-- Ensure the `FLY_API_TOKEN` is added as a secret in your GitHub repository settings.
-- This token is required for automatic deployment using Fly.io.
-- Add it under `Settings > Secrets and variables > Actions` in your GitHub repository.
-
-For more details on setting up GitHub Actions for deployment, refer to the Fly.io documentation.
