@@ -15,10 +15,6 @@ select = [
 ignore = [
     "E501",  # line-too-long — handled by formatter where possible
     "B008",  # function calls in defaults (common in discord.py)
-    # Pre-existing issues to address as follow-up PRs:
-    "E722",  # bare except — src/utils/blue_tracker.py
-    "F841",  # unused variable — src/utils/blue_tracker.py
-    "B007",  # unused loop control variable — src/utils/embeds.py
 ]
 
 [tool.ruff.lint.per-file-ignores]

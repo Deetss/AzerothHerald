@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Bare `except:` in `src/utils/blue_tracker.py` narrowed to `ValueError` (catches the only exception `datetime.strptime` raises here)
+- Removed unused `cache = self.load_cache()` in `get_reset_relevant_posts`
+- Replaced `for i, post in enumerate(...)` with `for post in ...` in three spots in `src/utils/embeds.py` where the index was never used
+- Dropped `E722`, `F841`, `B007` from ruff `ignore` list now that the underlying issues are resolved
+
 ### Added
 - AI agent guidance file (`AGENTS.md`) read by Claude Code, Cursor, Codex, Aider, Zed, Continue and others
 - `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`

@@ -227,7 +227,7 @@ class BlueTrackerScraper:
                     if ' ' in posted:  # Format like "2025-08-23 12:51:17"
                         dt = datetime.strptime(posted, "%Y-%m-%d %H:%M:%S")
                         time_posted = dt.strftime("%B %d, %Y at %I:%M %p")
-                except:
+                except ValueError:
                     time_posted = posted
 
             # Build URL - prioritize actual URLs from the data
@@ -541,10 +541,7 @@ class BlueTrackerScraper:
         """Get recent posts that are relevant to weekly reset activities."""
         from datetime import datetime, timedelta
 
-        # Get all cached posts first
-        cache = self.load_cache()
-
-        # Also fetch fresh posts to make sure we have the latest
+        # Fetch fresh posts to make sure we have the latest
         soup = self.fetch_blue_tracker_page()
         if soup:
             fresh_posts = self.parse_posts(soup)
