@@ -1,7 +1,7 @@
 -r requirements.txt
 
 # Lint + formatting
-ruff>=0.15.13
+ruff>=0.17.6
 
 # Tests
 pytest>=9.0.3
